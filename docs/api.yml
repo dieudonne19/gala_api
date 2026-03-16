@@ -1,0 +1,937 @@
+openapi: "3.0.3"
+info:
+  title: Api
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+security:
+  - BearerAuth: []
+
+tags:
+  - name: auth
+    description: For all authentications requests
+paths:
+  /auth/sign-up:
+    post:
+      tags:
+        - auth
+      security: []
+      summary: Create new account with basic user role
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Credentials"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SignUpResult"
+  /auth/sign-in:
+    post:
+      tags:
+        - auth
+      security: []
+      summary: Login with and existing account
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Credentials"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SignInResult"
+  /auth/google:
+    post:
+      tags:
+        - auth
+      security: []
+      summary: Login or register with Google OAuth
+      operationId: signInWithGoogle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idToken:
+                  type: string
+              required:
+                - idToken
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SignInResult"
+  /account/{accountId}/label:
+    get:
+      tags:
+        - label
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Name"
+      summary: Get all disponibles lables for the specified account
+      operationId: getAllLabels
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pagination:
+                    allOf:
+                      - $ref: "#/components/schemas/PaginationResult"
+                  values:
+                    items:
+                      $ref: "#/components/schemas/Label"
+    post:
+      tags:
+        - label
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+      summary: Create new label for the specified account
+      operationId: createOneLabel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/CreationLabel"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Label"
+  /account/{accountId}/label/{labelId}:
+    get:
+      tags:
+        - label
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/LabelId"
+      summary: Get get one label by id for the specified account
+      operationId: getOneLabel
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Label"
+    put:
+      tags:
+        - label
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/LabelId"
+      summary: Update one label by id for the specified account
+      operationId: updateOneLabel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Label"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Label"
+  /account/{accountId}/label/{labelId}/archive:
+    post:
+      tags:
+        - label
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/LabelId"
+      summary: Archive one label by id
+      operationId: archiveOneLabel
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Label"
+  /account/{accountId}/wallet:
+    get:
+      tags:
+        - wallet
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/Name"
+        - $ref: "#/components/parameters/IsActive"
+        - $ref: "#/components/parameters/WalletType"
+      summary: Get all disponibles wallet for the specified account
+      operationId: getAllWallets
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pagination:
+                    allOf:
+                      - $ref: "#/components/schemas/PaginationResult"
+                  values:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Wallet"
+
+    post:
+      tags:
+        - wallet
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+      summary: Create new wallet for the specified account
+      operationId: createOneWallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/CreationWallet"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wallet"
+  /account/{accountId}/wallet/{walletId}:
+    get:
+      tags:
+        - wallet
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+      summary: Get get one wallet by id for the specified account
+      operationId: getOneWallet
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wallet"
+    put:
+      tags:
+        - wallet
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+      summary: Update one wallet by id for the specified account
+      operationId: updateOneWallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/UpdateWallet"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wallet"
+  /account/{accountId}/wallet/{walletId}/archive:
+    post:
+      tags:
+        - wallet
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+      summary: Archive one wallet by id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wallet"
+
+  /account/{accountId}/wallet/{walletId}/automaticIncome:
+    put:
+      tags:
+        - wallet
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+      summary: Update one wallet automatic income by walletId and accountId
+      operationId: updateOneWalletAutomaticIncome
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/WalletAutomaticIncome"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wallet"
+
+  /account/{accountId}/transaction:
+    get:
+      tags:
+        - transaction
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/QueryWalletId"
+        - $ref: "#/components/parameters/StartingDate"
+        - $ref: "#/components/parameters/EndingDate"
+        - $ref: "#/components/parameters/TransactionType"
+        - $ref: "#/components/parameters/TransactionLabel"
+        - $ref: "#/components/parameters/MinAmount"
+        - $ref: "#/components/parameters/MaxAmount"
+        - $ref: "#/components/parameters/TransactionSortBy"
+        - $ref: "#/components/parameters/Sort"
+      summary: Get all disponibles transaction for the specified account
+      operationId: getAllTransactions
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /account/{accountId}/wallet/{walletId}/transaction:
+    post:
+      tags:
+        - transaction
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+      summary: Create new transaction for the specified account
+      operationId: createOneTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/CreationTransaction"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Transaction"
+  /account/{accountId}/wallet/{walletId}/transaction/{transactionId}:
+    get:
+      tags:
+        - transaction
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+        - $ref: "#/components/parameters/TransactionId"
+      summary: Get get one transaction by id for the specified account
+      operationId: getOneTransaction
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Transaction"
+    put:
+      tags:
+        - transaction
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+        - $ref: "#/components/parameters/TransactionId"
+      summary: Update one transaction by id for the specified account
+      operationId: updateOneTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Transaction"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Transaction"
+    delete:
+      tags:
+        - transaction
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+        - $ref: "#/components/parameters/TransactionId"
+      summary: Delete one transaction and update wallet amount
+      operationId: removeOneTransaction
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Transaction"
+
+  /account/{accountId}/goal:
+    get:
+      tags:
+        - goal
+      summary: Get all disponibles goal of one account
+      operationId: getAllGoals
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/QueryWalletId"
+        - $ref: "#/components/parameters/Name"
+        - $ref: "#/components/parameters/MinAmount"
+        - $ref: "#/components/parameters/MaxAmount"
+        - $ref: "#/components/parameters/StartingDateBeginning"
+        - $ref: "#/components/parameters/StartingDateEnding"
+        - $ref: "#/components/parameters/EndingDateBeginning"
+        - $ref: "#/components/parameters/EndingDateEnding"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pagination:
+                    allOf:
+                      - $ref: "#/components/schemas/PaginationResult"
+                  values:
+                    items:
+                      $ref: "#/components/schemas/Goal"
+
+  /account/{accountId}/wallet/{walletId}/goal:
+    post:
+      tags:
+        - goal
+      summary: create new goal for one account
+      operationId: createOneGoal
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/CreationGoal"
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pagination:
+                    allOf:
+                      - $ref: "#/components/schemas/PaginationResult"
+                  values:
+                    items:
+                      $ref: "#/components/schemas/Goal"
+  /account/{accountId}/wallet/{walletId}/goal/{goalId}:
+    get:
+      tags:
+        - goal
+      summary: Get one goal of one account by it's id
+      operationId: getOneGoal
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+        - $ref: "#/components/parameters/GoalId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/Goal"
+    put:
+      tags:
+        - goal
+      summary: update one goal of one account
+      operationId: updateOneGoal
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/WalletId"
+        - $ref: "#/components/parameters/GoalId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Goal"
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/Goal"
+  /account/{accountId}/wallet/{walletId}/goal/{goalId}/archive:
+    post:
+      tags:
+        - goal
+      parameters:
+        - $ref: "#/components/parameters/AccountId"
+        - $ref: "#/components/parameters/LabelId"
+        - $ref: "#/components/parameters/WalletId"
+      summary: Archive one label by id
+      operationId: archiveOneGoal
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Goal"
+
+components:
+  parameters:
+    Id:
+      name: id
+      required: true
+      in: path
+      schema:
+        type: string
+        format: uuid
+    AccountId:
+      name: accountId
+      required: true
+      in: path
+      schema:
+        type: string
+        format: uuid
+    LabelId:
+      name: labelId
+      required: true
+      in: path
+      schema:
+        type: string
+        format: uuid
+    TransactionId:
+      name: transactionId
+      required: true
+      in: path
+      schema:
+        type: string
+        format: uuid
+    WalletId:
+      name: walletId
+      required: true
+      in: path
+      schema:
+        type: string
+        format: uuid
+    GoalId:
+      name: goalId
+      required: true
+      in: path
+      schema:
+        type: string
+        format: uuid
+    Page:
+      name: page
+      required: false
+      in: query
+      schema:
+        type: number
+        default: 1
+    PageSize:
+      name: pageSize
+      required: false
+      in: query
+      schema:
+        type: number
+        default: 10
+    Name:
+      name: name
+      required: false
+      in: query
+      schema:
+        type: string
+    IsActive:
+      name: isActive
+      required: false
+      in: query
+      schema:
+        type: boolean
+    WalletType:
+      name: walletType
+      required: false
+      in: query
+      schema:
+        type: string
+        enum:
+          - CASH
+          - MOBILE_MONEY
+          - BANK
+          - DEBT
+    StartingDate:
+      name: startingDate
+      required: false
+      in: query
+      schema:
+        type: string
+        format: date-time
+    EndingDate:
+      name: endingDate
+      required: false
+      in: query
+      schema:
+        type: string
+        format: date-time
+    StartingDateBeginning:
+      name: startingDateBeginning
+      required: false
+      in: query
+      schema:
+        type: string
+        format: date-time
+    StartingDateEnding:
+      name: startingDateEnding
+      required: false
+      in: query
+      schema:
+        type: string
+        format: date-time
+    EndingDateBeginning:
+      name: endingDateBeginning
+      required: false
+      in: query
+      schema:
+        type: string
+        format: date-time
+    EndingDateEnding:
+      name: endingDateEnding
+      required: false
+      in: query
+      schema:
+        type: string
+        format: date-time
+    TransactionType:
+      name: type
+      required: false
+      in: query
+      schema:
+        type: string
+        enum:
+          - IN
+          - OUT
+    TransactionLabel:
+      name: label
+      required: false
+      in: query
+      schema:
+        type: array
+        items:
+          description: label ids
+          type: string
+          format: uuid
+    QueryWalletId:
+      name: walletId
+      required: false
+      in: query
+      schema:
+        type: string
+        format: uuid
+    MinAmount:
+      name: minAmount
+      required: false
+      in: query
+      schema:
+        type: number
+        format: double
+    MaxAmount:
+      name: maxAmount
+      required: false
+      in: query
+      schema:
+        type: number
+        format: double
+    TransactionSortBy:
+      name: sortBy
+      required: false
+      in: query
+      schema:
+        type: string
+        enum:
+          - date
+          - amount
+    GoalSortBy:
+      name: sortBy
+      required: false
+      in: query
+      schema:
+        type: string
+        enum:
+          - startingDate
+          - endingDate
+          - name
+          - createdAt
+          - amount
+    Sort:
+      name: sort
+      required: false
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+    Month:
+      name: month
+      required: false
+      in: query
+      schema:
+        type: number
+        minimum: 0
+        maximum: 11
+    Year:
+      name: year
+      required: false
+      in: query
+      schema:
+        type: number
+
+  schemas:
+    CreationGoal:
+      type: object
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Frebruary resolution
+        amount:
+          type: number
+        walletId:
+          type: string
+        startingDate:
+          type: string
+          format: date-time
+        endingDate:
+          type: string
+          format: date-time
+        color:
+          type: string
+        iconRef:
+          type: string
+    Goal:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/CreationGoal"
+      properties:
+        id:
+          type: string
+          format: uuid
+    CreationTransaction:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/Label"
+        type:
+          type: string
+          enum:
+            - IN
+            - OUT
+        description:
+          type: string
+        amount:
+          type: number
+          format: double
+        walletId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+    Transaction:
+      allOf:
+        - $ref: "#/components/schemas/CreationTransaction"
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    WalletAutomaticIncome:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - NOT_SPECIFIED
+            - MENSUAL
+        amount:
+          type: number
+        paymentDay:
+          type: number
+          description: |
+            one day in a month where the new payment will be add to the current wallet
+            only work if the type is MENSUAL
+
+    CreationWallet:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Personal
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - CASH
+            - MOBILE_MONEY
+            - BANK
+            - DEBT
+        color:
+          type: string
+          example: "#00ff00"
+          default: "#00ff00"
+        iconRef:
+          type: string
+
+    UpdateWallet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        isActive:
+          type: boolean
+      allOf:
+        - $ref: "#/components/schemas/CreationWallet"
+    Wallet:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/UpdateWallet"
+      properties:
+        amount:
+          type: number
+          format: double
+        walletAutomaticIncome:
+          allOf:
+            - $ref: "#/components/schemas/WalletAutomaticIncome"
+    CreationLabel:
+      type: object
+      properties:
+        name:
+          type: string
+          example: FOOD
+        color:
+          type: string
+          example: "#00ff00"
+          default: "#00ff00"
+        iconRef:
+          type: string
+    Label:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/CreationLabel"
+      properties:
+        id:
+          type: string
+          format: uuid
+
+    Credentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    SignUpResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+    SignInResult:
+      type: object
+      properties:
+        account:
+          allOf:
+            - $ref: "#/components/schemas/SignUpResult"
+        token:
+          type: string
+    PaginationResult:
+      type: object
+      properties:
+        totalPage:
+          type: number
+          minimum: 1
+        page:
+          type: number
+          minimum: 1
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
