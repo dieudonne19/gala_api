@@ -1,11 +1,11 @@
 import cors from "cors";
+import dotenv from "dotenv";
 import express, { json } from "express";
 
 import { errorHandler, securityHandler } from "@/middlewares";
 import { authRouter, goalListRouter, goalRouter, labelRouter, swaggerRouter, transactionListRouter, transactionRouter } from "@/routes";
 
 import { walletRouter } from "./routes/wallet-routes";
-import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -19,6 +19,9 @@ export const server = async () => {
     app.use((req, res, next) => {
       res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
       next();
+    });
+    app.get("/health", (req, res) => {
+      res.status(200).json({ status: "ok" });
     });
 
     app.use("/auth", authRouter);
